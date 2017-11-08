@@ -2,7 +2,7 @@
 .stack 100h
 .data
 	original_string	db 'Assembler language programming the fastest in the world', 13, 10, '$'
-	new_string db 255 DUP(?)
+	new_string db 255 DUP(?), '$'
 .code
 .386
 main:
@@ -32,5 +32,4 @@ main:
 
 	mov ax,	4c00h
 	int 21h
-
 end main
