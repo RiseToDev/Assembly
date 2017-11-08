@@ -1,0 +1,56 @@
+	.model small
+	.stack 100h
+	.data
+		message_error byte "Error! Overflow data!", 0dh, 0ah, "$"
+		val1 dword 6
+		val2 dword 8
+		val3 dword 3
+		val4 dword ?
+		val5 dword ?
+		val6 sword -24
+		val7 sword -80
+		val8 sword -4
+		val9 sword ?
+	.code
+	.386
+	main:
+		mov ax,	@data
+		mov dx,	ax
+		clc
+		mov eax, val1
+		add eax, val2
+		mul eax, val3
+		jc message
+
+		mov val4, eax
+		jmp next
+
+		message:
+		mov ah,	9
+		mov dx,	offset message_error
+		int 21h
+
+		next:
+		clc
+		mov eax, val1
+		mov ebx, 5
+		mul ebx
+		mov ebx, val2
+		sub ebx, 3
+		div ebx
+		mov val5, eax
+
+		mov ax,	val7
+		cwd
+		idiv val8
+		mov bx,	ax
+		mov ax,	-5
+		imul val6
+		idiv bx
+		mov val9, ax
+
+		mov ax,	4c00h
+		int 21h
+
+
+		end main
