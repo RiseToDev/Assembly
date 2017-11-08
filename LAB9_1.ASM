@@ -14,12 +14,12 @@ main:
 	mov ah,	9
 	int 21h
 	
-	cld
+	std
 
-	;mov ecx, lengthof original_string
+	mov ecx, lengthof original_string
 
-	;sub ecx, 25
-	mov cx, 25 
+	sub ecx, 25
+	;mov cx, 25 
 
 	;mov esi, [offset original_string] + 30
 	mov edi, offset	new_string
