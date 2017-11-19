@@ -2,13 +2,13 @@
 	pmark=
 	version=3
 [debug-]
-	target="d:\assembly\inclass.exe"
+	target="d:\assembly\inhome.exe"
 	synonym=;D:\ASSEMBLY
 [cv]
 	wndstate=0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1
 	wndstate=1 67 5 0 1 0 1 0 0 0 0 0 0 0 -1
 	wndstate=2 34 4 33 1 0 0 0 0 0 0 0 0 0 -1
-	wndstate=3 67 13 0 6 1 1 0 0 0 20 17 0 0 -1
+	wndstate=3 67 13 0 6 1 1 0 0 0 17 14 0 0 -1
 	wndstate=4 67 7 3 8 0 0 0 0 0 0 0 0 0 -1
 	wndstate=5 67 4 0 12 0 0 0 0 0 0 0 0 0 -1
 	wndstate=6 67 4 3 15 0 0 0 0 0 0 0 0 0 -1

@@ -1,3 +1,4 @@
+;counting the amount of elements in the first row
 .model small
 .stack 100h
 .data

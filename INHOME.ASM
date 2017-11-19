@@ -1,3 +1,4 @@
+;counting the amount of elements in the second column
 .model small
 .stack 100h
 .data
