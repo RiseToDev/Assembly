@@ -1,11 +1,12 @@
-.model
+.model small
 .stack 100h
 .data
 	a dw ?
 	b dw ?
 	d dw ?
+	r_12 dw ?
 
-	toDo 		 db 'The program finds the sum of three numbers.', 13, 10, '$'
+	toDo 		 db 'The program finds the sum of three numbers: r_12 = a - b + c^2.', 13, 10, '$'
 	firstNumber	 db 'Enter the first number: $'
 	secondNumber db 'Enter the second number $'
 	thirdNumber  db 'Enter the third number: $'
@@ -17,9 +18,9 @@
 	buffer label byte 
 	maxL   db 6
 	actL   db ?
-	field  db 6 dup (?)
+	field  db 6 dup(?)
 	l      dw 6
-	outBuf db 6 (?), '$'
+	outBuf db 6 dup(?), '$'
 
 .code
 .386
@@ -28,58 +29,66 @@ main:
 	mov ds, ax
 	mov dx, offset toDo
 
-	call Console.WriteLine
+	call WriteLine
 	mov dx, offset firstNumber
-	call Console.WriteLine
-	call Console.ReadLine
+	call WriteLine
+	call ReadLine
 	call ASCII_To_Bin
 	mov a, ax
 
 			mov dx, offset crlf
 
-	call Console.WriteLine
+	call WriteLine
 	mov dx, offset secondNumber
-	call Console.WriteLine
-	call Console.ReadLine
+	call WriteLine
+	call ReadLine
 	call ASCII_To_Bin
 	mov b, ax
 
 			mov dx, offset crlf
 
-	call Console.WriteLine
+	call WriteLine
 	mov dx, offset thirdNumber
-	call Console.WriteLine
-	call Console.ReadLine
+	call WriteLine
+	call ReadLine
 	call ASCII_To_Bin
 	mov d, ax
 
 			mov dx, offset crlf
 
-	;\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\logic\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\		
+	;\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\logic\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\	r_12 = a - b + c^2	
+									clc
+
+									mov ax, d
+									mul ax
+
+									add ax, a
+									sub ax, b
+
 
 	
-	;\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\end logic\\\\\\\\\\\\\\\\\\\\\\\\\\
+	;\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\end logic\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 	mov dx, offset outBuf
 	mov bx, dx
 	call BinToASCII
 	mov dx, offset theSum
-	call Console.WriteLine
+	call WriteLine
 	mov dx, offset outBuf
-	call Console.WriteLine
+	call WriteLine
 	mov dx, offset exit
-	call Console.WriteLine
-	call Console.WaitingForKey
-	call Console.ExitProgram
+	call WriteLine
+	call WaitingForKey
+	call ExitProgram
 
 ;========================================"Linrary of methods"======================================================
 
 ;-------------Convert bin to ascii-------------------------
-	Console.BinToASCII proc
+	BinToASCII proc
 	mov cx, l
 
 	Fill_Buf:
-		mov byte ptr[bx],''
+		mov byte ptr[bx],' '
 		inc bx
 		loop Fill_Buf
 	mov si, 10
@@ -93,11 +102,11 @@ main:
 		inc cx
 		or ax, ax
 		jnz Cld_Dvd
-	Console.BinToASCII endp
+	BinToASCII endp
 ;-------------------------end------------------------------
 
 ;-----------Convert ascii to bin----------------------------
-	Console.ASCII_To_Bin proc
+	ASCII_To_Bin proc
 	xor di, di 
 	xor ax, ax
 	mov cl, actL
@@ -121,17 +130,17 @@ main:
 		
 	acsii_error:
 		mov dx, offset error
-		call Console.WriteLine
+		call WriteLine
 		mov dx, offset exit
-		call Console.WriteLine
-		call Console.WaitingForKey
-		call Console.ExitProgram
+		call WriteLine
+		call WaitingForKey
+		call ExitProgram
 
 	ASCII_To_Bin endp
 ;-------------------------end------------------------------
 
 ;---------------Read from keyboard-------------------------
-	Console.ReadLine proc 
+	ReadLine proc 
 	push ax
 	mov dx, offset buffer
 	mov ah, 0ch
@@ -142,35 +151,35 @@ main:
 	add dx, 2
 	pop ax
 	ret
-	Console.ReadLine endp
+	ReadLine endp
 ;-------------------------end------------------------------
 
 ;-----------------Display on the screan--------------------
-	Console.WriteLine proc
+	WriteLine proc
 	push ax
 	mov ah, 09h
 	int 21h
 	pop ax
 	ret
-	Console.WriteLine endp
+	WriteLine endp
 ;-------------------------end------------------------------
 
 ;---------------Method for waiting of key pressing---------
-	Console.WaitingForKey proc
+	WaitingForKey proc
 	push ax
 	mov ah, 8
 	int 21h
 	pop ax
 	ret
-	Console.WaitingForKey endp
+	WaitingForKey endp
 ;-------------------------end------------------------------
 
 ;---------------Method for exit of the program-------------
-	Console.ExitProgram proc
+	ExitProgram proc
 	mov ax, 4c00h
 	int 21h
 	ret
-	Console.ExitProgram endp
+	ExitProgram endp
 ;-------------------------end------------------------------
 ;================================================end of "Library"===================================================
 end main
