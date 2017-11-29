@@ -21,15 +21,56 @@
 	l      dw 6
 	outBuf db 6 (?), '$'
 
-	.code
-	.386
+.code
+.386
 main:
-
 	mov ax, dgroup
 	mov ds, ax
 	mov dx, offset toDo
 
+	call Console.WriteLine
+	mov dx, offset firstNumber
+	call Console.WriteLine
+	call Console.ReadLine
+	call ASCII_To_Bin
+	mov a, ax
 
+			mov dx, offset crlf
+
+	call Console.WriteLine
+	mov dx, offset secondNumber
+	call Console.WriteLine
+	call Console.ReadLine
+	call ASCII_To_Bin
+	mov b, ax
+
+			mov dx, offset crlf
+
+	call Console.WriteLine
+	mov dx, offset thirdNumber
+	call Console.WriteLine
+	call Console.ReadLine
+	call ASCII_To_Bin
+	mov d, ax
+
+			mov dx, offset crlf
+
+	;\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\logic\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\		
+
+	
+	;\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\end logic\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+	mov dx, offset outBuf
+	mov bx, dx
+	call BinToASCII
+	mov dx, offset theSum
+	call Console.WriteLine
+	mov dx, offset outBuf
+	call Console.WriteLine
+	mov dx, offset exit
+	call Console.WriteLine
+	call Console.WaitingForKey
+	call Console.ExitProgram
 
 ;========================================"Linrary of methods"======================================================
 
@@ -92,7 +133,7 @@ main:
 ;---------------Read from keyboard-------------------------
 	Console.ReadLine proc 
 	push ax
-	mov dx, offset Buffer
+	mov dx, offset buffer
 	mov ah, 0ch
 	mov al, 0ah
 	int 21h
