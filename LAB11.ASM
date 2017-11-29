@@ -8,9 +8,9 @@
 
 	toDo 		 db 'The program finds the sum of three numbers: r_12 = a - b + c^2.', 13, 10, '$'
 	firstNumber	 db 'Enter the first number: $'
-	secondNumber db 'Enter the second number $'
+	secondNumber db 'Enter the second number: $'
 	thirdNumber  db 'Enter the third number: $'
-	theSum 		 db 'The sum of input numbers is:', '$'
+	theSum 		 db 10, 13, 10,'The sum of input numbers is: $'
 	exit         db 10, 13, 10, 'Press any key to exit...', 13, 10, '$'
 	error 		 db 'Input error', 13, 10, '$'
 
@@ -57,16 +57,13 @@ main:
 			mov dx, offset crlf
 
 	;\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\logic\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\	r_12 = a - b + c^2	
-									clc
+									;clc
 
 									mov ax, d
-									mul ax
+									mul ax; = c^2
 
-									add ax, a
-									sub ax, b
-
-
-	
+									add ax, a; = c^2 + a
+									sub ax, b; = (c^2 + a) - b
 	;\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\end logic\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 	mov dx, offset outBuf
@@ -82,7 +79,7 @@ main:
 	call ExitProgram
 
 ;========================================"Linrary of methods"======================================================
-
+;|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 ;-------------Convert bin to ascii-------------------------
 	BinToASCII proc
 	mov cx, l
@@ -181,5 +178,6 @@ main:
 	ret
 	ExitProgram endp
 ;-------------------------end------------------------------
+;|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 ;================================================end of "Library"===================================================
 end main
