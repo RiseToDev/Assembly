@@ -22,19 +22,19 @@
 	buffer label byte 					; 
 	maxL   db 6							;initialise 6 variables equals for six double words (32-bits or 4 bytes)
 	actL   db ?							;initialise undetermined number of variables equals for six double words (32-bits or 4 bytes)
-	field  db 6 dup(?) ;dup(?) - initialise 6 variables equals for six double words (32-bits or 4 bytes)
+	field  db 6 dup(?) 					;dup(?) - initialise 6 variables equals for six double words (32-bits or 4 bytes)
 	l      dw 6							;initialise 6 variables equals for six double words (32-bits or 4 bytes)
-	outBuf db 6 dup(?), '$' ;$ - symbol of the end of string
+	outBuf db 6 dup(?), '$' 			;$ - symbol of the end of string
 
 .code									;detect the code-segment
 .386									;the set of commands of 386 processor
-main:
+main: 									;the labe of beginning of the program
 	mov ax, dgroup						;the beginning of data-segment in AX
 	mov ds, ax 							;the beginning of data-segment in DS
-	mov dx, offset toDo					;the beginning of the toDo string in DX
+	mov dx, offset toDo					;the beginning of the toDo string in DX / Set the address of the data receiver
 
 	call WriteLine						;WriteLine procedure call
-	mov dx, offset firstNumber			;Display the message: "Enter the first number: " 
+	mov dx, offset firstNumber			;Display the message: "Enter the first number: " / Set the address of the data receiver
 	call WriteLine						;WriteLine procedure call
 	call ReadLine						;ReadLine procedure call
 	call ASCII_To_Bin					;ASCII_To_Bin procedure call
@@ -43,7 +43,7 @@ main:
 			mov dx, offset crlf			;Moves you to a new line and clears the buffer
 
 	call WriteLine						;WriteLine procedure call
-	mov dx, offset secondNumber			;Display the message: "Enter the second number: " 
+	mov dx, offset secondNumber			;Display the message: "Enter the second number: " / Set the address of the data receiver
 	call WriteLine						;WriteLine procedure call
 	call ReadLine						;ReadLine procedure call
 	call ASCII_To_Bin					;ASCII_To_Bin procedure call
@@ -52,7 +52,7 @@ main:
 			mov dx, offset crlf			;Moves you to a new line and clears the buffer
 
 	call WriteLine						;WriteLine procedure call
-	mov dx, offset thirdNumber			;Display the message: "Enter the third number: " 
+	mov dx, offset thirdNumber			;Display the message: "Enter the third number: " / Set the address of the data receiver
 	call WriteLine						;WriteLine procedure call
 	call ReadLine						;ReadLine procedure call
 	call ASCII_To_Bin					;ASCII_To_Bin procedure call
@@ -70,14 +70,14 @@ main:
 							sub ax, b 	; = (c^2 + a) - b. Substring from the amount - variable "b"
 	;\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\end logic\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
-	mov dx, offset outBuf				;in dx upload the bin code of the number 
+	mov dx, offset outBuf				;in dx upload the bin code of the number / Set the address of the data receiver
 	mov bx, dx 							;then from dx to ax
 	call BinToASCII						;BinToASCII procedure call, which is covert the bin code into ASCII
-	mov dx, offset theSum				;display the 'The sum of input numbers is: '
+	mov dx, offset theSum				;display the 'The sum of input numbers is: '/ Set the address of the data receiver
 	call WriteLine						;WriteLine procedure call, which write that is above
-	mov dx, offset outBuf				;and display the number after '...input numbers is: '
+	mov dx, offset outBuf				;and display the number after '...input numbers is: ' / Set the address of the data receiver
 	call WriteLine						;WriteLine procedure call, which write that is above
-	mov dx, offset exit 				;display the 'Press any key to exit...'
+	mov dx, offset exit 				;display the 'Press any key to exit...' / Set the address of the data receiver
 	call WriteLine						;WriteLine procedure call, which write that is above
 	call WaitingForKey					;WaitingForKey procedure call
 	call ExitProgram					;ExitProgram procedure call
@@ -124,69 +124,76 @@ ASCII_To_Bin proc						;init the procedure
 	acsii2hex: 							;init label
 		mov bl, byte ptr field[di] 		;mov something in BL register
 		sub bl, '0' 					;Substring the 0 char from the value in BL register
-		jb acsii_error 					;
-		cmp bl, '9'                     ;
-		ja acsii_error 					;
-		mul cx 							;
-		add ax, bx 					 	;
-		inc di 							;
-		cmp di, si 						;
-		jb acsii2hex 					;
-		ret 							;
+		jb acsii_error 					;mov to "acsii_error" label when x < y and ZF=0 and CF=1
+		cmp bl, '9'                     ;Subtracts the source operand from the data receiver.
+										;The SMP does not change the value of the recipient's operand.
+										;SMP changes CF, ZF, SP, OF, AF and PF. 
+										;It sets them depending on the value that was obtained as a result of the SUB command
+		ja acsii_error 					;mov to "acsii_error" label when x > y and ZF=0 and CF=0
+		mul cx 							;multiply cx on cx
+		add ax, bx 					 	;add to value in AX, the value from BX
+		inc di 							;increment the value of the DI register by 1 pont (bx++)
+		cmp di, si 						;Subtracts the source operand from the data receiver.
+										;The SMP does not change the value of the recipient's operand.
+										;SMP changes CF, ZF, SP, OF, AF and PF. 
+										;It sets them depending on the value that was obtained as a result of the SUB command
+		jb acsii2hex 					;mov to "acsii_error" label when x < y and ZF=0 and CF=1
+		ret 							;Return procedure
 		
 	acsii_error: 						;init label
-		mov dx, offset error 			;
-		call WriteLine 					;
-		mov dx, offset exit 			;
-		call WriteLine					;
-		call WaitingForKey 				;
-		call ExitProgram 				;
+		mov dx, offset error 			;Display the message: "Input error" / Set the address of the data receiver
+		call WriteLine 					;WriteLine procedure call
+		mov dx, offset exit 			;Display the message: "Press any key to exit..." / Set the address of the data receiver
+		call WriteLine					;WriteLine procedure call
+		call WaitingForKey 				;WaitingForKey procedure call
+		call ExitProgram 				;ExitProgram procedure call
 
-	ASCII_To_Bin endp 					;
+	ASCII_To_Bin endp 					;the end of procedure
 ;-------------------------end------------------------------
 ;|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 ;---------------Read from keyboard-------------------------
-ReadLine proc 
-	push ax
-	mov dx, offset buffer
-	mov ah, 0ch
-	mov al, 0ah
-	int 21h
-	xor ch, ch
-	mov cl, actL
-	add dx, 2
-	pop ax
-	ret
-	ReadLine endp
+ReadLine proc 							;init the procedure
+	push ax 							;PUSH places the value on the stack - puts the value in the memory location (Stack)
+	mov dx, offset buffer 				;Set the address of the data receiver
+	mov ah, 0ch 						;Function of displaying a point on the screen
+	mov al, 0ah 						;keyboard input function
+	int 21h 							;call for DOS function
+	xor ch, ch 							;logical division of two registers. Return 1 if values are different, 0 if equal.
+										;Reset OF and CF flags. And set ZF, PF, SF flags with the result.
+	mov cl, actL 						;mov the value in actL variable in CL register
+	add dx, 2 							;add to value in DX, the value = 2
+	pop ax 								;POP retrieves a value from the stack - retrieves the value from the memory location pointed to by the ESP register
+	ret 								;Return the procedure
+	ReadLine endp 						;the end of procedure
 ;-------------------------end------------------------------
 ;|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 ;-----------------Display on the screan--------------------
-WriteLine proc
-	push ax
-	mov ah, 09h
-	int 21h
-	pop ax
-	ret
-	WriteLine endp
+WriteLine proc 							;init the procedure
+	push ax 							;PUSH places the value on the stack - puts the value in the memory location (Stack)
+	mov ah, 09h 						;Function - output of strings
+	int 21h 							;call for DOS function
+	pop ax 								;POP retrieves a value from the stack - retrieves the value from the memory location pointed to by the ESP register
+	ret 								;Return the procedure
+	WriteLine endp 						;the end of procedure
 ;-------------------------end------------------------------
 ;|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 ;---------------Method for waiting of key pressing---------
-WaitingForKey proc
-	push ax
-	mov ah, 8
-	int 21h
-	pop ax
-	ret
-	WaitingForKey endp
+WaitingForKey proc 						;init the procedure
+	push ax 							;PUSH places the value on the stack - puts the value in the memory location (Stack)
+	mov ah, 8 							;The 08h function checks if you typed CTRL + BREAK
+	int 21h 							;call for DOS function
+	pop ax 								;POP retrieves a value from the stack - retrieves the value from the memory location pointed to by the ESP register
+	ret 								;Return the procedure
+	WaitingForKey endp 					;the end of procedure
 ;-------------------------end------------------------------
 ;|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 ;---------------Method for exit of the program-------------
-ExitProgram proc
-	mov ax, 4c00h
-	int 21h
-	ret
-	ExitProgram endp
+ExitProgram proc 						;init the procedure
+	mov ax, 4c00h 	 					;the number of the function of the end of program in AX
+	int 21h								;call for DOS function
+	ret 								;Return the procedure
+	ExitProgram endp 					;the end of procedure
 ;-------------------------end------------------------------
 ;|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 ;================================================end of "Library"===================================================
-end main
+end main 								;the end of main
