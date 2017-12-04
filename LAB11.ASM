@@ -10,9 +10,9 @@
   	;0Ah (10) - move the cursor in one position down
  	;0Dh (13) - go to the beginning of the current line
 	toDo 		 db 'The program finds the sum of three numbers: r_12 = a - b + c^2.', 13, 10, '$' 
-	firstNumber	 db 'Enter the first number: $'
-	secondNumber db 'Enter the second number: $'
-	thirdNumber  db 'Enter the third number: $'
+	firstNumber	 db 'Enter the first number - a: $'
+	secondNumber db 'Enter the second number - b: $'
+	thirdNumber  db 'Enter the third number - c: $'
 	theSum 		 db 10, 13, 10,'The sum of input numbers is: $'
 	exit         db 10, 13, 10, 'Press any key to exit...', 13, 10, '$'
 	error 		 db 'Input error', 13, 10, '$'
@@ -40,7 +40,7 @@ main: 									;the labe of beginning of the program
 	call ASCII_To_Bin					;ASCII_To_Bin procedure call
 	mov a, ax 							;put the value of AX register in the variable "a"
 
-			mov dx, offset crlf			;Moves you to a new line and clears the buffer
+			mov dx, offset crlf			;Moves you to a new line
 
 	call WriteLine						;WriteLine procedure call
 	mov dx, offset secondNumber			;Display the message: "Enter the second number: " / Set the address of the data receiver
@@ -49,7 +49,7 @@ main: 									;the labe of beginning of the program
 	call ASCII_To_Bin					;ASCII_To_Bin procedure call
 	mov b, ax 							;put the value of AX register in the variable "b"
 
-			mov dx, offset crlf			;Moves you to a new line and clears the buffer
+			mov dx, offset crlf			;Moves you to a new line
 
 	call WriteLine						;WriteLine procedure call
 	mov dx, offset thirdNumber			;Display the message: "Enter the third number: " / Set the address of the data receiver
@@ -58,16 +58,18 @@ main: 									;the labe of beginning of the program
 	call ASCII_To_Bin					;ASCII_To_Bin procedure call
 	mov d, ax 							;put the value of AX register in the variable "c"
 
-			mov dx, offset crlf			;Moves you to a new line and clears the buffer
+			mov dx, offset crlf			;Moves you to a new line
 
 	;\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\logic\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-							;r_12 = a - b + c^2								
+							;r_12 = a - b + c^2	
+							
 
+							
 							mov ax, d  	; in AX register put a variable "d"
 							mul ax 		; = c^2. get the second power of "d"
 
 							add ax, a 	; = c^2 + a. Adding to "d" a variable "a"
-							sub ax, b 	; = (c^2 + a) - b. Substring from the amount - variable "b"
+							sub ax, b 	; = (c^2 + a) - b. Substring from the amount - variable "b"							
 	;\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\end logic\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 	mov dx, offset outBuf				;in dx upload the bin code of the number / Set the address of the data receiver
@@ -78,6 +80,7 @@ main: 									;the labe of beginning of the program
 	mov dx, offset outBuf				;and display the number after '...input numbers is: ' / Set the address of the data receiver
 	call WriteLine						;WriteLine procedure call, which write that is above
 	mov dx, offset exit 				;display the 'Press any key to exit...' / Set the address of the data receiver
+
 	call WriteLine						;WriteLine procedure call, which write that is above
 	call WaitingForKey					;WaitingForKey procedure call
 	call ExitProgram					;ExitProgram procedure call
@@ -97,6 +100,7 @@ BinToASCII proc 						;init the procedure
 	Cld_Dvd:							;init label
 		xor dx, dx    					;logical division of two registers. Return 1 if values are different, 0 if equal.
 										;Reset OF and CF flags. And set ZF, PF, SF flags with the result.
+		div si							;		
 		add dx, '0' 					;Add char of 0 to the value in DX register
 		dec bx 							;decreases the value of the BX register by 1 pont (bx--)
 		mov byte ptr[bx], dl 			;mov the value from DL register to ptr-array
@@ -153,7 +157,7 @@ ASCII_To_Bin proc						;init the procedure
 ;|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 ;---------------Read from keyboard-------------------------
 ReadLine proc 							;init the procedure
-	push ax 							;PUSH places the value on the stack - puts the value in the memory location (Stack)
+	push ax 							;PUSH places the value in the stack - puts the value in the memory location (Stack)
 	mov dx, offset buffer 				;Set the address of the data receiver
 	mov ah, 0ch 						;Function of displaying a point on the screen
 	mov al, 0ah 						;keyboard input function
@@ -169,7 +173,7 @@ ReadLine proc 							;init the procedure
 ;|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 ;-----------------Display on the screan--------------------
 WriteLine proc 							;init the procedure
-	push ax 							;PUSH places the value on the stack - puts the value in the memory location (Stack)
+	push ax 							;PUSH places the value in the stack - puts the value in the memory location (Stack)
 	mov ah, 09h 						;Function - output of strings
 	int 21h 							;call for DOS function
 	pop ax 								;POP retrieves a value from the stack - retrieves the value from the memory location pointed to by the ESP register
@@ -179,7 +183,7 @@ WriteLine proc 							;init the procedure
 ;|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 ;---------------Method for waiting of key pressing---------
 WaitingForKey proc 						;init the procedure
-	push ax 							;PUSH places the value on the stack - puts the value in the memory location (Stack)
+	push ax 							;PUSH places the value in the stack - puts the value in the memory location (Stack)
 	mov ah, 8 							;The 08h function checks if you typed CTRL + BREAK
 	int 21h 							;call for DOS function
 	pop ax 								;POP retrieves a value from the stack - retrieves the value from the memory location pointed to by the ESP register
