@@ -100,7 +100,7 @@ BinToASCII proc 						;init the procedure
 	Cld_Dvd:							;init label
 		xor dx, dx    					;logical division of two registers. Return 1 if values are different, 0 if equal.
 										;Reset OF and CF flags. And set ZF, PF, SF flags with the result.
-		div si							;		
+		div si							;the result is either in the AL register (if the NUMBER is a byte) or in the AX register (if NUMBER is a word).	
 		add dx, '0' 					;Add char of 0 to the value in DX register
 		dec bx 							;decreases the value of the BX register by 1 pont (bx--)
 		mov byte ptr[bx], dl 			;mov the value from DL register to ptr-array
